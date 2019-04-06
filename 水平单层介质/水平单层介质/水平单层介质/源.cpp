@@ -6,13 +6,28 @@
 #define step 1
 double velo(double v1, double v2, double v3, double v4, int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4, int x, int y,double c[10]);
 double ray_tracing_recieve(int x0, double angle, double z, double l[100], double c[10], double(*v)[1000]);
-double ray_tracing_time(double x0, double tan, double z, double x);
+//double ray_tracing_time(double x0, double tan, double z, double x);
 void main()
 {
 	int i, j, k, i1, j1, i2, j2, i3, j3, i4, j4,x,y; 
 	double d_x, d_angle;
-	//定义真实模型和初始模型数组
-	double V_real[550][1000], V_init[550][1000];
+	//double *V_real;
+	//用二级指针动态申请二维数组??
+	//printf("请输入行数\n");
+	//scanf("%d", &m);
+	//printf("请输入列数\n");
+	//scanf("%d", &n);
+	int m = 1000, n = 1000;
+	double(*V_real)[1000] = (double(*)[1000])malloc(sizeof(double) * m * n);
+	for (i = 0; i<m; i++)
+	{
+		for (j = 0; j<n; j++)
+		{
+			//printf("%p\n", &V_real[i][j]); //输出数组每个元素地址，每个元素的地址是连续的
+		}
+	}
+	//double V_real[1000][1000];
+	double V_init[1000][1000];
 	//int size = 1000;
 	//int(*p)[50] = new int[size][50];
 	double c_init[10], c_real[10], L[100];
@@ -48,7 +63,7 @@ void main()
 		for (i = i1; i <= i4; i++)
 	{
 		V_real[i][j] = velo(V_real[i1][j1], V_real[i2][j2], V_real[i3][j3], V_real[i4][j4], i1, j1, i2, j2, i3, j3, i4, j4,i,j,c_real);
-		printf(" %d ,%d    %-10f    ",i,j,V_real[i][j]);
+		//printf(" %d ,%d    %-10f    ",i,j,V_real[i][j]);
 		//if (i % 100 == 0 && i!=0 )
 			//printf("\n");
 	}
@@ -70,17 +85,17 @@ void main()
 	printf("the 1st ray\n");
 	X1=ray_tracing_recieve(x1, angle, j4, L, c_real, V_real);
 	//t0[0] = ray_tracing_time(x1,angle,j4,x1);
-	//printf("the 2nd ray\n");
-	//X2 = ray_tracing_recieve(x2, angle, j4);
+	printf("the 2nd ray\n");
+	X2 = ray_tracing_recieve(x2, angle, j4, L, c_real, V_real);
 	//t0[1] = ray_tracing_time(x2, angle, j4, x1);
-	//printf("the 3rd ray\n");
-	//X3 = ray_tracing_recieve(x3, angle, j4);
+	printf("the 3rd ray\n");
+	X3 = ray_tracing_recieve(x3, angle, j4, L, c_real, V_real);
 	//t0[2] = ray_tracing_time(x3, angle, j4, x1);
-	//printf("the 4th ray\n");
-	//X4 = ray_tracing_recieve(x4, angle, j4);
+	printf("the 4th ray\n");
+	X4 = ray_tracing_recieve(x4, angle, j4, L, c_real, V_real);
 	//t0[3] = ray_tracing_time(x4, angle, j4, x1);
-	//printf("the 5th ray\n");
-	//X5 = ray_tracing_recieve(x5, angle, j4);
+	printf("the 5th ray\n");
+	X5 = ray_tracing_recieve(x5, angle, j4, L, c_real, V_real);
 	//t0[4] = ray_tracing_time(x5, angle, j4, x1);
 	
 	//初始模型定义
@@ -222,6 +237,7 @@ void main()
 			if (abs(z[k-1] - z[k]) < 0.001)
 				break;
 	}*/
+	free(V_real);
 	getchar();
 }
 static double velo(double v1,double v2,double v3,double v4,int x1,int y1,int x2,int y2,int x3,int y3,int x4,int y4,int x,int y,double c[10])
@@ -291,8 +307,8 @@ double ray_tracing_recieve(int x0, double angle, double z, double T[100], double
 					//time
 					l = sqrt(step*step + d_x*d_x); 
 					t = l / v[int(x)][int(i*step)]; 
-					printf("\n go \n");
-					printf("\nl=%f\nt=%f\n", l, t);
+					//printf("\n go \n");
+					//printf("\nl=%f\nt=%f\n", l, t);
 					t_sum += t;
 					//H[i] = y;
 					//printf("\n V=%f \n x=%d, z=%d \n", v[int(x)][int(i*step)],int(x),int(step*i));
@@ -309,8 +325,8 @@ double ray_tracing_recieve(int x0, double angle, double z, double T[100], double
 					x += d_x;
 					l = sqrt(step*step + d_x*d_x);
 					t = l / v[int(x)][int(2 * z - i*step)]; 
-					printf("\n back \n");
-					printf("\nl=%f\nt=%f\n", l, t);
+					//printf("\n back \n");
+					//printf("\nl=%f\nt=%f\n", l, t);
 					t_sum += t;
 					//H[i] = y;
 					d_angle = 
@@ -326,7 +342,7 @@ double ray_tracing_recieve(int x0, double angle, double z, double T[100], double
 			}
 		}
 	}
-	printf("\n last location: x = %f  y = %f  \nlast time: t=%f", x, y,t_sum);
+	printf("\n last location: x = %f  y = %f  \nlast time: t=%f\n", x, y,t_sum);
 	T[0] = t_sum;
 	return x;
 }
